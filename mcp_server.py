@@ -12,6 +12,8 @@ from typing import Any, AsyncIterator, Literal, Optional
 
 from pydantic import BaseModel, Field
 from pydantic_ai import Agent
+from pydantic_ai.models.openai import OpenAIModel
+from pydantic_ai.providers.openai import OpenAIProvider
 from mcp.server.fastmcp import Context, FastMCP
 
 from client import FreebaseClient
@@ -139,15 +141,27 @@ async def lifespan(server: FastMCP) -> AsyncIterator[MCPContext]:
     logger.info("Initializing Freebase MCP Server")
 
     try:
-        # Create profile selection sub-agent
-        model = os.getenv("FREEBASE_PROFILE_MODEL", "openai:gpt-4o-mini")
+        # Create profile selection sub-agent with OpenRouter
+        api_key = os.getenv("OPENROUTER_API_KEY")
+        if not api_key:
+            raise ValueError("OPENROUTER_API_KEY environment variable not set")
+        
+        model_name = os.getenv("FREEBASE_PROFILE_MODEL", "x-ai/grok-4-fast")
+        model = OpenAIModel(
+            model_name,
+            provider=OpenAIProvider(
+                base_url="https://openrouter.ai/api/v1",
+                api_key=api_key,
+            ),
+        )
+        
         profile_agent = Agent(
             model,
             output_type=ProfileSelectionOutput,
             system_prompt=PROFILE_AGENT_SYSTEM_PROMPT,
         )
 
-        logger.info(f"Profile agent initialized with model: {model}")
+        logger.info(f"Profile agent initialized with model: {model_name}")
         yield MCPContext(profile_agent=profile_agent)
 
     except Exception as e:
