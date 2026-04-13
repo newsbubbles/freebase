@@ -1,0 +1,15 @@
+# Freebase - Git History Surgeon
+
+# Core dependencies
+pydantic>=2.0.0
+httpx>=0.25.0
+
+# MCP Server
+mcp>=1.0.0
+
+# Agent
+pydantic-ai>=0.1.0
+python-dotenv>=1.0.0
+
+# Optional: Observability
+logfire>=0.1.0

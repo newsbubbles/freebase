@@ -1,0 +1,125 @@
+{
+  "name": "freebase",
+  "description": "Git history surgeon that transforms messy AI-generated branches into clean, reviewable commit sequences",
+  "url": "https://freebase.local",
+  "provider": {
+    "name": "Freebase",
+    "url": "https://github.com/freebase"
+  },
+  "version": "1.0.0",
+  "documentationUrl": "https://freebase.local/docs",
+  "streaming": true,
+  "pushNotifications": false,
+  "stateTransitionHistory": true,
+  "authentication": {
+    "scheme": "Bearer",
+    "credentials": [
+      {
+        "type": "api_key",
+        "description": "OpenRouter API key for LLM access",
+        "required": true
+      }
+    ]
+  },
+  "defaultInputModes": [
+    "text/plain",
+    "application/json"
+  ],
+  "defaultOutputModes": [
+    "text/plain",
+    "application/json"
+  ],
+  "skills": [
+    {
+      "id": "branch_analysis",
+      "name": "Branch Analysis",
+      "description": "Analyze a git branch to identify commit clusters, fixups, reverts, and risk factors",
+      "tags": ["git", "analysis", "commits", "clusters"],
+      "examples": [
+        {
+          "input": "Analyze my feature branch against main",
+          "output": "Found 23 commits in 5 clusters. 8 fixups, 2 reverts detected. Medium risk.",
+          "description": "Basic branch analysis"
+        }
+      ]
+    },
+    {
+      "id": "profile_selection",
+      "name": "Profile Selection",
+      "description": "Automatically select the optimal rebase profile based on branch characteristics",
+      "tags": ["git", "rebase", "profile", "ai"],
+      "examples": [
+        {
+          "input": "What profile should I use for my PR?",
+          "output": "Selected pr_clean profile (95% confidence). This will optimize for code review readability.",
+          "description": "Auto profile selection"
+        }
+      ]
+    },
+    {
+      "id": "rebase_planning",
+      "name": "Rebase Planning",
+      "description": "Generate a detailed rebase plan with squash, fixup, and drop operations",
+      "tags": ["git", "rebase", "planning"],
+      "examples": [
+        {
+          "input": "Create a rebase plan for my feature branch",
+          "output": "Plan created: 23 commits → 8 commits. 3 clusters will be squashed, 2 questions need answers.",
+          "description": "Plan generation"
+        }
+      ]
+    },
+    {
+      "id": "safe_rebase_execution",
+      "name": "Safe Rebase Execution",
+      "description": "Execute rebase operations step-by-step in a temporary worktree for safety",
+      "tags": ["git", "rebase", "execution", "safety"],
+      "examples": [
+        {
+          "input": "Execute the next rebase step",
+          "output": "Step 5/12 complete. Squashed 3 fixup commits. Next: pick abc1234",
+          "description": "Step execution"
+        }
+      ]
+    },
+    {
+      "id": "conflict_resolution",
+      "name": "Conflict Resolution",
+      "description": "Analyze merge conflicts and propose resolution strategies",
+      "tags": ["git", "conflicts", "resolution"],
+      "examples": [
+        {
+          "input": "Help me resolve this conflict",
+          "output": "Structural conflict in src/auth.py. Recommended: accept ours (keeps new auth logic). Risk: low.",
+          "description": "Conflict analysis"
+        }
+      ]
+    },
+    {
+      "id": "checkpoint_recovery",
+      "name": "Checkpoint Recovery",
+      "description": "Restore repository to a safe checkpoint state when things go wrong",
+      "tags": ["git", "recovery", "safety", "rollback"],
+      "examples": [
+        {
+          "input": "Abort and restore to the last checkpoint",
+          "output": "Restored to checkpoint abc123. Worktree cleaned. Branch reset to backup.",
+          "description": "Checkpoint restoration"
+        }
+      ]
+    },
+    {
+      "id": "range_diff_verification",
+      "name": "Range Diff Verification",
+      "description": "Verify rebase correctness by comparing original and rebased commit ranges",
+      "tags": ["git", "verification", "range-diff"],
+      "examples": [
+        {
+          "input": "Verify the rebase preserved my changes",
+          "output": "Ranges are semantically equivalent. 23 → 8 commits. No content lost.",
+          "description": "Rebase verification"
+        }
+      ]
+    }
+  ]
+}
