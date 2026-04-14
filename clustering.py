@@ -18,17 +18,19 @@ from models import CommitCluster, CommitNode, ClusterAction
 
 
 class EmbeddingClient:
-    """Client for generating text embeddings via OpenAI API."""
+    """Client for generating text embeddings via OpenRouter API."""
 
     def __init__(
         self,
         api_key: Optional[str] = None,
-        model: str = "text-embedding-3-small",
-        base_url: str = "https://api.openai.com/v1",
+        model: str = "qwen/qwen3-embedding-8b",
+        base_url: str = "https://openrouter.ai/api/v1",
+        dimensions: int = 768,
     ):
-        self.api_key = api_key or os.environ.get("OPENAI_API_KEY")
+        self.api_key = api_key or os.environ.get("OPENROUTER_API_KEY")
         self.model = model
         self.base_url = base_url
+        self.dimensions = dimensions
         self._cache: dict[str, list[float]] = {}
 
     def _cache_key(self, text: str) -> str:
@@ -60,7 +62,8 @@ class EmbeddingClient:
             )
             response.raise_for_status()
             data = response.json()
-            embedding = data["data"][0]["embedding"]
+            # Truncate to dimensions (Qwen3 supports Matryoshka Representation Learning)
+            embedding = data["data"][0]["embedding"][:self.dimensions]
 
         self._cache[cache_key] = embedding
         return embedding
@@ -102,17 +105,21 @@ class EmbeddingClient:
 
                 for item in data["data"]:
                     idx = item["index"]
-                    embedding = item["embedding"]
+                    # Truncate to dimensions (Qwen3 supports Matryoshka Representation Learning)
+                    embedding = item["embedding"][:self.dimensions]
                     original_idx = uncached_indices[idx]
                     results[original_idx] = embedding
                     self._cache[self._cache_key(uncached_texts[idx])] = embedding
 
         return [r for r in results if r is not None]
 
-    def _fallback_embedding(self, text: str, dim: int = 256) -> list[float]:
+    def _fallback_embedding(self, text: str, dim: Optional[int] = None) -> list[float]:
         """Generate a simple hash-based pseudo-embedding when no API key."""
         # This is NOT a real embedding, just for testing without API
         import struct
+
+        if dim is None:
+            dim = self.dimensions
 
         h = hashlib.sha256(text.lower().encode())
         # Generate dim floats from hash

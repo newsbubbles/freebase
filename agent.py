@@ -201,7 +201,6 @@ async def main():
     # MCP environment variables
     env = {
         "OPENROUTER_API_KEY": api_key,
-        "OPENAI_API_KEY": os.getenv("OPENAI_API_KEY", ""),
         "FREEBASE_PROFILE_MODEL": os.getenv("FREEBASE_PROFILE_MODEL", "x-ai/grok-4-fast"),
         "LOGGER_PATH": os.getenv("LOGGER_PATH", ""),
         "LOGGER_NAME": "freebase_mcp",

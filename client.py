@@ -62,15 +62,15 @@ class FreebaseClient:
     def __init__(
         self,
         repo_path: str,
-        openai_api_key: Optional[str] = None,
+        openrouter_api_key: Optional[str] = None,
     ):
         self.repo_path = Path(repo_path).resolve()
         self.git = GitOps(str(self.repo_path))
         self.state = StateManager(str(self.repo_path))
 
-        # Embedding client for commit message similarity
+        # Embedding client for commit message similarity (uses OpenRouter)
         self.embedding_client = EmbeddingClient(
-            api_key=openai_api_key or os.environ.get("OPENAI_API_KEY")
+            api_key=openrouter_api_key or os.environ.get("OPENROUTER_API_KEY")
         )
 
         # Clustering builder
