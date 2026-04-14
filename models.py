@@ -490,6 +490,8 @@ class PlanGenerateResponse(BaseModel):
     """Response from git_rebase_plan_generate tool."""
 
     plan_id: str = Field(description="Unique identifier for this plan")
+    branch: str = Field(description="Branch being rebased")
+    base_branch: str = Field(description="Target base branch")
     original_commits: int = Field(description="Starting commit count")
     planned_commits: int = Field(description="Resulting commit count")
     operations: list[RebaseOperation] = Field(description="Ordered rebase operations")

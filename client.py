@@ -334,6 +334,8 @@ class FreebaseClient:
 
         response = PlanGenerateResponse(
             plan_id=plan_id,
+            branch=request.branch,
+            base_branch=request.base_branch,
             original_commits=analysis.total_commits,
             planned_commits=planned_commits,
             operations=operations,
@@ -664,10 +666,10 @@ class FreebaseClient:
         # Load or create session
         session = self.state.load_session()
         if not session or session.current_plan_id != request.plan_id:
-            # Start new execution
+            # Start new execution - use branch info from the plan
             session = self.state.create_session(
-                branch=session.branch if session else "unknown",
-                base_branch=session.base_branch if session else "main",
+                branch=plan.branch,
+                base_branch=plan.base_branch,
             )
             session = self.state.update_session(
                 current_plan_id=request.plan_id,
@@ -675,12 +677,12 @@ class FreebaseClient:
                 status="executing",
             )
 
-            # Create worktree
+            # Create worktree using the plan's branch
             worktree_path = await self._setup_worktree(plan)
             session = self.state.update_session(worktree_path=str(worktree_path))
 
-            # Create backup
-            backup_ref = await self.git.create_backup_ref(session.branch)
+            # Create backup of the branch being rebased
+            backup_ref = await self.git.create_backup_ref(plan.branch)
             session = self.state.update_session(backup_ref=backup_ref)
 
         # Determine which step to execute
@@ -814,8 +816,8 @@ class FreebaseClient:
         worktree_name = f"freebase-work-{timestamp}"
         worktree_path = self.repo_path.parent / worktree_name
 
-        session = self.state.load_session()
-        branch = session.branch if session else "HEAD"
+        # Use the branch from the plan directly - this is the source of truth
+        branch = plan.branch
 
         await self.git.worktree_add(
             path=str(worktree_path),
