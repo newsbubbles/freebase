@@ -23,9 +23,9 @@ class EmbeddingClient:
     def __init__(
         self,
         api_key: Optional[str] = None,
-        model: str = "qwen/qwen3-embedding-8b",
+        model: str = "mistralai/mistral-embed-2312",
         base_url: str = "https://openrouter.ai/api/v1",
-        dimensions: int = 768,
+        dimensions: int = 1024,
     ):
         self.api_key = api_key or os.environ.get("OPENROUTER_API_KEY")
         self.model = model
