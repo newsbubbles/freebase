@@ -2,6 +2,21 @@
 
 All notable changes to Freebase will be documented in this file.
 
+## [1.0.1] - 2026-04-14
+
+### Fixed
+
+- **Execution/Worktree errors**: Fixed `fatal: Not a valid object name: 'unknown'` error during `freebase_execute_step`
+  - Root cause: `PlanGenerateResponse` didn't store branch info, causing session creation to fall back to "unknown"
+  - Added `branch` and `base_branch` fields to [`models.py`](../models.py) `PlanGenerateResponse`
+  - Updated [`client.py`](../client.py) `execute_step()` to use plan's branch info
+  - Updated [`client.py`](../client.py) `_setup_worktree()` to use plan's branch directly
+
+### Changed
+
+- Embedding service migrated from OpenAI to OpenRouter (using `mistralai/mistral-embed-2312`)
+- Single API key (`OPENROUTER_API_KEY`) now handles both LLM and embeddings
+
 ## [1.0.0] - 2026-04-13
 
 ### Added
