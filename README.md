@@ -38,14 +38,11 @@ uv pip install -r requirements.txt
 ## Environment Variables
 
 ```bash
-# Required for agent
+# Required - Used for both the agent LLM and embeddings (mistralai/mistral-embed-2312)
 export OPENROUTER_API_KEY="your-key"
 
-# Required for embeddings (commit message similarity)
-export OPENAI_API_KEY="your-key"
-
-# Optional: Profile selection model (default: openai:gpt-4o-mini)
-export FREEBASE_PROFILE_MODEL="openai:gpt-4o-mini"
+# Optional: Profile selection model (default: x-ai/grok-4-fast)
+export FREEBASE_PROFILE_MODEL="x-ai/grok-4-fast"
 
 # Optional: Logging
 export LOGGER_PATH="/path/to/freebase.log"
